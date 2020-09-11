@@ -1,6 +1,13 @@
 import TransactionsRepository from '../repositories/TransactionsRepository';
 import Transaction from '../models/Transaction';
 
+interface Request {
+  id: string;
+  title: string;
+  value: number;
+  type: 'income' | 'outcome';
+}
+
 class CreateTransactionService {
   private transactionsRepository: TransactionsRepository;
 
@@ -8,8 +15,20 @@ class CreateTransactionService {
     this.transactionsRepository = transactionsRepository;
   }
 
-  public execute(): Transaction {
-    // TODO
+  public execute({ title, type, value }: Request): Transaction {
+    const balanceValue = this.transactionsRepository.getBalance();
+
+    if (type === 'outcome' && value > balanceValue.total) {
+      throw Error('This transaction goes beyond the companys cash');
+    }
+
+    const transactionObject = this.transactionsRepository.create({
+      title,
+      type,
+      value,
+    });
+
+    return transactionObject;
   }
 }
 

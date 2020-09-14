@@ -1,4 +1,3 @@
-import { json } from 'express';
 import Transaction from '../models/Transaction';
 
 interface Balance {
@@ -17,21 +16,7 @@ class TransactionsRepository {
   private transactions: Transaction[];
 
   constructor() {
-    this.transactions = [
-      {
-        id: 'idAA',
-        title: 'botou',
-        type: 'income',
-        value: 100,
-      },
-
-      {
-        id: 'idBB',
-        title: 'tirou',
-        type: 'outcome',
-        value: 40,
-      },
-    ];
+    this.transactions = [];
   }
 
   public all(): Transaction[] {
@@ -40,11 +25,12 @@ class TransactionsRepository {
 
   public getBalance(): Balance {
     const incomeValue = this.transactions.reduce((total, item) => {
+      // Podemos separar total e item em tipos (total: Balance) para melhor manutenção de código
       if (item.type === 'income') {
         return total + item.value;
       }
       return total;
-    }, 0);
+    }, 0); // É possível passar um Objecto em vez de um valor único
 
     const outcomeValue = this.transactions.reduce((total, item) => {
       if (item.type === 'outcome') {
